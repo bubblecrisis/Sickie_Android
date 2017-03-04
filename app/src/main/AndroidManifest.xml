@@ -38,6 +38,8 @@
             android:name=".ui.VideoActivity_"
             android:configChanges="orientation|screenSize" >
         </activity>
+        <activity android:name=".ui.AppointmentActivity_"
+                  android:label="Appointment" />
     </application>
 
 </manifest>

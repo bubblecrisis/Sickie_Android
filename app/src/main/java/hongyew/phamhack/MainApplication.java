@@ -8,6 +8,7 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EApplication;
 
 import hongyew.phamhack.api.TwillioApi;
+import hongyew.phamhack.model.Appointment;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -21,7 +22,6 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 @EApplication
 public class MainApplication extends Application {
-
 
     @AfterInject
     public void init() {
@@ -48,6 +48,11 @@ public class MainApplication extends Application {
         return retrofit().create(TwillioApi.class);
     }
 
+    public Appointment.User appointmentSelf() {
+        return new Appointment.User("Hong Yew", 30L);
+    };
+    
+    
     private void initializeCustomFont() {
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/HelveticaNeue-Light.ttf")

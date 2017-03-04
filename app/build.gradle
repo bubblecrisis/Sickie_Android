@@ -21,8 +21,8 @@ android {
 }
 
 dependencies {
-    
 
+    compile ('com.github.bubblecrisis:android-1-liner:93b146f4f5')
     compile fileTree(dir: 'libs', include: ['*.jar'])
     
     // Android Annotation

@@ -42,15 +42,20 @@ import com.twilio.video.VideoRenderer;
 import com.twilio.video.VideoTrack;
 import com.twilio.video.VideoView;
 
+import org.android1liner.ui.DialogUtils;
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.App;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.math.BigDecimal;
 import java.util.Map;
 
+import hongyew.phamhack.AppPreference_;
+import hongyew.phamhack.MainApplication;
 import hongyew.phamhack.R;
 import hongyew.phamhack.manager.ConferenceManager;
 import hongyew.phamhack.model.BasketProduct;
@@ -105,6 +110,9 @@ public class VideoActivity extends AppCompatActivity {
     @Extra
     public String twillioToken;
     
+    @App
+    MainApplication application;
+    
     @Bean
     ConferenceManager conferenceManager;
     
@@ -113,6 +121,9 @@ public class VideoActivity extends AppCompatActivity {
     
     @ViewById(R.id.total_value)
     TextView totalView;
+    
+    @Pref
+    AppPreference_ pref;
     
     FirebaseRecyclerAdapter<BasketProduct, BasketProductViewHolder> adapter;
     
@@ -153,6 +164,16 @@ public class VideoActivity extends AppCompatActivity {
          */
         intializeUI();
         loadBasket();
+        if (pref.appointmentKey().get() != null) {
+            connectToRoom(pref.appointmentKey().get());
+        }
+        else {
+            DialogUtils.alert(this, "No appointment", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    finish();
+                }
+            });
+        }
     }
     
     void loadBasket() {
@@ -296,6 +317,9 @@ public class VideoActivity extends AppCompatActivity {
         
         // OPTION 1- Generate an access token from the getting started portal
         // https://www.twilio.com/console/video/dev-tools/testing-tools
+    
+       // twillioToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzkxMTQ4ZmFkYjYxMzVkYzZmZTEyYTNjOWRmN2VjYmRiLTE0ODg1OTY4NTQiLCJpc3MiOiJTSzkxMTQ4ZmFkYjYxMzVkYzZmZTEyYTNjOWRmN2VjYmRiIiwic3ViIjoiQUNiNDcxOTM4MWM2NjcwOTJjMzM2N2E5MDgyYTg0OTMyYyIsImV4cCI6MTQ4ODYwMDQ1NCwiZ3JhbnRzIjp7ImlkZW50aXR5IjoiSG9uZyIsInJ0YyI6eyJjb25maWd1cmF0aW9uX3Byb2ZpbGVfc2lkIjoiVlM3OTgwM2NkZmY4NWU3NDA2MjdmMmE2MzNiZjE1M2Q3MiJ9fX0.pF3KwuQo-61pBP_v5RxcnqLDDADBCjNJwtHFF8oDX5M";
+    
         videoClient = new VideoClient(VideoActivity.this, twillioToken);
         
         // OPTION 2- Retrieve an access token from your own web app
@@ -303,22 +327,28 @@ public class VideoActivity extends AppCompatActivity {
     }
     
     private void connectToRoom(String roomName) {
-        setAudioFocus(true);
-        ConnectOptions connectOptions = new ConnectOptions.Builder()
-                                            .roomName(roomName)
-                                            .localMedia(localMedia)
-                                            .build();
-        room = videoClient.connect(connectOptions, roomListener());
-        setDisconnectAction();
+        try {
+            setAudioFocus(true);
+            ConnectOptions connectOptions = new ConnectOptions.Builder()
+                                                .roomName(roomName)
+                                                .localMedia(localMedia)
+                                                .build();
+            room = videoClient.connect(connectOptions, roomListener());
+            setDisconnectAction();
+        }
+        catch (Exception e) {
+            Log.e(VideoActivity.class.getSimpleName(), e.toString(), e);
+            finish();
+        }
     }
     
     /*
      * The initial state when there is no active conversation.
      */
     private void intializeUI() {
-        //connectActionFab.setImageDrawable(ContextCompat.getDrawable(this,
-        //    R.drawable.ic_call_white_24px));
-        //connectActionFab.setOnClickListener(connectActionClickListener());
+        connectActionFab.setImageDrawable(ContextCompat.getDrawable(this,
+            R.drawable.ic_call_white_24px));
+        connectActionFab.setOnClickListener(connectActionClickListener());
         switchCameraActionFab.show();
         switchCameraActionFab.setOnClickListener(switchCameraClickListener());
         localVideoActionFab.show();
@@ -500,23 +530,23 @@ public class VideoActivity extends AppCompatActivity {
             
             @Override
             public void onAudioTrackAdded(Media media, AudioTrack audioTrack) {
-                videoStatusTextView.setText("onAudioTrackAdded");
+                //videoStatusTextView.setText("onAudioTrackAdded");
             }
             
             @Override
             public void onAudioTrackRemoved(Media media, AudioTrack audioTrack) {
-                videoStatusTextView.setText("onAudioTrackRemoved");
+                //videoStatusTextView.setText("onAudioTrackRemoved");
             }
             
             @Override
             public void onVideoTrackAdded(Media media, VideoTrack videoTrack) {
-                videoStatusTextView.setText("onVideoTrackAdded");
+                //videoStatusTextView.setText("onVideoTrackAdded");
                 addParticipantVideo(videoTrack);
             }
             
             @Override
             public void onVideoTrackRemoved(Media media, VideoTrack videoTrack) {
-                videoStatusTextView.setText("onVideoTrackRemoved");
+                //videoStatusTextView.setText("onVideoTrackRemoved");
                 removeParticipantVideo(videoTrack);
             }
             
