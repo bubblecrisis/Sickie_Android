@@ -11,4 +11,5 @@ public class BasketProduct {
     public Long quantity;
     public String symptoms;
     public String productId;
+    public String buy;
 }

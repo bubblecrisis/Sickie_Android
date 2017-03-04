@@ -11,16 +11,19 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
@@ -46,6 +49,7 @@ import org.android1liner.ui.DialogUtils;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.App;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
@@ -58,6 +62,7 @@ import hongyew.phamhack.AppPreference_;
 import hongyew.phamhack.MainApplication;
 import hongyew.phamhack.R;
 import hongyew.phamhack.manager.ConferenceManager;
+import hongyew.phamhack.manager.ConferenceManager_;
 import hongyew.phamhack.model.BasketProduct;
 
 @EActivity(R.layout.activity_video)
@@ -185,6 +190,8 @@ public class VideoActivity extends AppCompatActivity {
                 viewHolder.descriptionView.setText(model.symptoms);
                 viewHolder.priceView.setText("$" + new BigDecimal(model.price).setScale(2));
                 viewHolder.quantityView.setText(model.quantity.toString());
+                viewHolder.basketItemKey = getRef(position).getKey();
+                viewHolder.check(model.buy != null && model.buy.equalsIgnoreCase("true"));
                 calculateTotal();
             }
         };
@@ -197,7 +204,9 @@ public class VideoActivity extends AppCompatActivity {
         double total = 0;
         for (int i = 0; i<itemCount; i++){
             BasketProduct product = adapter.getItem(i);
-            total+= product.price;
+            if (product.buy != null && Boolean.TRUE.toString().equalsIgnoreCase(product.buy.toString())) {
+                total+= product.price;
+            }
         }
         totalView.setText("$" + new BigDecimal(total).setScale(2));
     }
@@ -721,20 +730,54 @@ public class VideoActivity extends AppCompatActivity {
         }
     }
     
+    @Click(R.id.checkout_button)
+    public void checkout() {
+        BuyCompleteActivity_.intent(this)
+            .total(totalView.getText().toString())
+            .appointmentKey(pref.appointmentKey().get())
+            .start();
+        finish();
+    }
+    
     public static class BasketProductViewHolder extends RecyclerView.ViewHolder {
         public ImageView imageView;
         public TextView nameView;
         public TextView descriptionView;
         public TextView quantityView;
         public TextView priceView;
+        public AppCompatCheckBox checkbox;
+        public String basketItemKey;
+        private CompoundButton.OnCheckedChangeListener checkListener;
         
-        public BasketProductViewHolder(View itemView) {
+        public BasketProductViewHolder(final View itemView) {
             super(itemView);
             imageView = (ImageView) itemView.findViewById(R.id.basket_item_image);
             nameView = (TextView) itemView.findViewById(R.id.basket_item_name);
             descriptionView = (TextView) itemView.findViewById(R.id.basket_item_description);
             quantityView = (TextView) itemView.findViewById(R.id.basket_item_quantity);
             priceView = (TextView) itemView.findViewById(R.id.basket_item_price);
+            checkbox = (AppCompatCheckBox) itemView.findViewById(R.id.basket_checkbox);
+    
+            checkListener = new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    ConferenceManager conferenceManager = ConferenceManager_.getInstance_(itemView.getContext());
+                    DatabaseReference ref = conferenceManager.basketRef("001").child(basketItemKey);
+                    if (b) {
+                        ref.child("buy").setValue("true");
+                    }
+                    else {
+                        ref.child("buy").setValue("false");
+                    }
+                }
+            };
+    
+            checkbox.setOnCheckedChangeListener(checkListener);
+        }
+        
+        public void check(boolean b) {
+            checkbox.setOnCheckedChangeListener(null);
+            checkbox.setChecked(b);
+            checkbox.setOnCheckedChangeListener(checkListener);
         }
     }
 }

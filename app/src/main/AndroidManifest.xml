@@ -40,6 +40,8 @@
         </activity>
         <activity android:name=".ui.AppointmentActivity_"
                   android:label="Appointment" />
+        <activity android:name=".ui.BuyCompleteActivity_"
+                  android:label="Thank you" />
     </application>
 
 </manifest>

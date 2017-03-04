@@ -62,6 +62,7 @@
                 android:layout_centerHorizontal="true"
                 tools:text="Total"/>
             <Button
+                android:id="@+id/checkout_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"

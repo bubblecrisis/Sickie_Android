@@ -43,9 +43,17 @@
 
     <TextView
         android:id="@+id/basket_item_price"
-        android:layout_alignParentRight="true"
+        android:layout_toLeftOf="@+id/basket_checkbox"
+
         tools:text="$10.00"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"/>
+
+    <android.support.v7.widget.AppCompatCheckBox
+        android:id="@+id/basket_checkbox"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </RelativeLayout>
