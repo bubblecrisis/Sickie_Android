@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "175847219358",
+    "firebase_url": "https://pharm-hack.firebaseio.com",
+    "project_id": "pharm-hack",
+    "storage_bucket": "pharm-hack.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:175847219358:android:155e2001ead5f5f3",
+        "android_client_info": {
+          "package_name": "hongyew.phamhack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "175847219358-d9h87ojqlh4vharbemm2qi2d2urrnq77.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJ8MgpNjhg0COgx02cHyuTkP-eNVl7VIs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
