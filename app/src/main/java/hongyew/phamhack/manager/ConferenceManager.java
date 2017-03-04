@@ -3,6 +3,7 @@ package hongyew.phamhack.manager;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 /**
@@ -10,6 +11,9 @@ import org.androidannotations.annotations.EBean;
  */
 @EBean
 public class ConferenceManager {
+    
+    @Bean
+    AppointmentManager appointmentManager;
     
     public DatabaseReference confRef() {
         return FirebaseDatabase.getInstance().getReference("conference");
@@ -20,7 +24,7 @@ public class ConferenceManager {
     }
     
     public DatabaseReference basketRef(String room) {
-        return confRef(room).child("basket");
+        return appointmentManager.appointmentRef(room).child("basket");
     }
     
 }

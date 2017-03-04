@@ -14,6 +14,8 @@ public class AppointmentManager {
     public DatabaseReference appointmentRef() {
         return FirebaseDatabase.getInstance().getReference("appointments");
     }
-    
+    public DatabaseReference appointmentRef(String key) {
+        return appointmentRef().child(key);
+    }
     
 }

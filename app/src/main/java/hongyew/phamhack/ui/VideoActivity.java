@@ -168,8 +168,10 @@ public class VideoActivity extends AppCompatActivity {
          * Set the initial state of the UI
          */
         intializeUI();
-        loadBasket();
+        
         if (pref.appointmentKey().get() != null) {
+            String roomKey = pref.appointmentKey().get();
+            loadBasket(roomKey);
             connectToRoom(pref.appointmentKey().get());
         }
         else {
@@ -181,15 +183,14 @@ public class VideoActivity extends AppCompatActivity {
         }
     }
     
-    void loadBasket() {
-        String roomName = "001";
+    void loadBasket(String roomName) {
         Query q = conferenceManager.basketRef(roomName);
         adapter = new FirebaseRecyclerAdapter<BasketProduct, BasketProductViewHolder>(BasketProduct.class, R.layout.basket_item, BasketProductViewHolder.class, q.getRef()) {
             protected void populateViewHolder(BasketProductViewHolder viewHolder, BasketProduct model, int position) {
                 viewHolder.nameView.setText(model.name);
                 viewHolder.descriptionView.setText(model.symptoms);
                 viewHolder.priceView.setText("$" + new BigDecimal(model.price).setScale(2));
-                viewHolder.quantityView.setText(model.quantity.toString());
+                viewHolder.quantityView.setText((model.quantity == null)? null: model.quantity.toString());
                 viewHolder.basketItemKey = getRef(position).getKey();
                 viewHolder.check(model.buy != null && model.buy.equalsIgnoreCase("true"));
                 calculateTotal();
@@ -760,13 +761,17 @@ public class VideoActivity extends AppCompatActivity {
     
             checkListener = new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    AppPreference_ pref = new AppPreference_(itemView.getContext());
                     ConferenceManager conferenceManager = ConferenceManager_.getInstance_(itemView.getContext());
-                    DatabaseReference ref = conferenceManager.basketRef("001").child(basketItemKey);
-                    if (b) {
-                        ref.child("buy").setValue("true");
-                    }
-                    else {
-                        ref.child("buy").setValue("false");
+                    String room = pref.appointmentKey().get();
+                    if (room != null) {
+                        DatabaseReference ref = conferenceManager.basketRef(room).child(basketItemKey);
+                        if (b) {
+                            ref.child("buy").setValue("true");
+                        }
+                        else {
+                            ref.child("buy").setValue("false");
+                        }
                     }
                 }
             };
