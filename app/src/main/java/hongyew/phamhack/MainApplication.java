@@ -49,7 +49,7 @@ public class MainApplication extends Application {
     }
 
     public Appointment.User appointmentSelf() {
-        return new Appointment.User("Hong Yew", 30L);
+        return new Appointment.User("Hong Yew", 30L, "hong.yew@gmail.com");
     };
     
     

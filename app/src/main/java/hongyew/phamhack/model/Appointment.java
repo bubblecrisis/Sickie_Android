@@ -23,11 +23,13 @@ public class Appointment {
     public static class User {
         public String name;
         public Long age;
+        public String email;
         public User() {}
         
-        public User(String name, Long age) {
+        public User(String name, Long age, String email) {
             this.name = name;
             this.age = age;
+            this.email = email;
         }
     }
 }
